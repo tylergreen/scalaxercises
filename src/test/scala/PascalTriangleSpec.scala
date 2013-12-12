@@ -1,7 +1,13 @@
 import org.scalatest._
+import org.scalatest.prop.Checkers
+import org.scalacheck.Arbitrary._
+import org.scalacheck.Prop._
 import com.tyler.coursera.PascalTriangle
 
-class PascalTriangleSpec extends FlatSpec {
+import org.scalacheck.Prop
+import org.scalatest.prop.Checkers._
+
+class PascalTriangleSpec extends FlatSpec with Checkers {
   "Pascal's Triangle" should "have all 1's along the left edge" in {
     assert((0 to 100).forall(PascalTriangle.pos(0, _) == 1))
   }
@@ -10,9 +16,17 @@ class PascalTriangleSpec extends FlatSpec {
     assert((0 to 100).forall(x => PascalTriangle.pos(x,x) == 1))
   }
 
+  it should "have all 1's along the left edge according to scalaCheck" in {
+    check(Prop.forAll((n: Int) => PascalTriangle.pos(0, n) == 1))
+  }
+
+  it should "have all 1's along the right edge according to scalaCheck" in {
+    check(Prop.forAll((n: Int) => PascalTriangle.pos(n, n) == 1))
+  }
+
+  // this is slower because it is generating the whole triangle
   it should "have all 1's along the right edge again" in {
-    val triangle1 = PascalTriangle.triangle
-    assert((0 to 10).forall(x => triangle1(x)(x) == 1))
+    assert((0 to 10).forall(x => PascalTriangle.triangle(x)(x) == 1))
   }
 
 
